@@ -7,6 +7,7 @@
 namespace Detail
 {
 
+    // trait to detect if type is a std::reference_wrapper<T>
     template <typename T>
     struct IsReferenceWrapper : std::false_type {};
 
@@ -51,8 +52,9 @@ namespace Detail
 #include "invoke_result.hpp"
 
 template <typename F, typename... Args>
-constexpr decltype(auto) Invoke(F &&f, Args&&... args) noexcept(std::is_nothrow_invocable_v<F, Args...>)
+//constexpr decltype(auto) Invoke(F &&f, Args&&... args) noexcept(std::is_nothrow_invocable_v<F, Args...>)
 //constexpr typename ResultOf<F(Args...)>::Type Invoke(F &&f, Args&&... args) noexcept(std::is_nothrow_invocable_v<F, Args...>)
+constexpr auto Invoke(F &&f, Args&&... args) noexcept(std::is_nothrow_invocable_v<F, Args...>) -> decltype(Detail::Invoke(std::forward<F>(f), std::forward<Args>(args)...))
 {
     return Detail::Invoke(std::forward<F>(f), std::forward<Args>(args)...);  // chooses the right function template overload
 }
